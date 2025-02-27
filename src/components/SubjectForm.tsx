@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { FiX, FiUpload, FiFile } from "react-icons/fi";
 
 interface SubjectFormProps {
@@ -12,6 +12,7 @@ const SubjectForm = ({ onSubmit, onCancel }: SubjectFormProps) => {
   const [files, setFiles] = useState<File[]>([]);
   const [error, setError] = useState("");
   const [dragActive, setDragActive] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -51,6 +52,11 @@ const SubjectForm = ({ onSubmit, onCancel }: SubjectFormProps) => {
       return;
     }
     onSubmit(subjectName, files);
+  };
+
+  const openFileSelector = () => {
+    // Trigger click on the hidden file input
+    fileInputRef.current?.click();
   };
 
   return (
@@ -114,9 +120,11 @@ const SubjectForm = ({ onSubmit, onCancel }: SubjectFormProps) => {
               onDragLeave={handleDrag}
               onDragOver={handleDrag}
               onDrop={handleDrop}
+              onClick={openFileSelector}
               whileHover={{ backgroundColor: "rgb(238, 242, 255)" }}
               animate={dragActive ? { scale: 1.02 } : { scale: 1 }}
               transition={{ type: "spring", stiffness: 300, damping: 15 }}
+              style={{ cursor: "pointer" }}
             >
               <div className="space-y-2 text-center">
                 <motion.div
@@ -132,7 +140,10 @@ const SubjectForm = ({ onSubmit, onCancel }: SubjectFormProps) => {
                 </motion.div>
                 <div className="flex flex-col space-y-1">
                   <p className="text-sm text-gray-600">
-                    <span className="font-medium text-indigo-600 hover:underline cursor-pointer">
+                    <span
+                      className="font-medium text-indigo-600 hover:underline cursor-pointer"
+                      onClick={openFileSelector}
+                    >
                       Click to browse
                     </span>{" "}
                     or drag and drop
@@ -142,6 +153,7 @@ const SubjectForm = ({ onSubmit, onCancel }: SubjectFormProps) => {
                   </p>
                 </div>
                 <input
+                  ref={fileInputRef}
                   id="file-upload"
                   type="file"
                   multiple
