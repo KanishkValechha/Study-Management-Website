@@ -7,6 +7,9 @@ import {
   FiChevronDown,
   FiChevronUp,
   FiEye,
+  FiFileText,
+  FiImage,
+  FiUser,
 } from "react-icons/fi";
 import SubjectForm from "./SubjectForm";
 
@@ -48,40 +51,30 @@ const Dashboard = () => {
   };
 
   return (
-    <motion.div
-      className="min-h-screen"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
-      <header className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg">
-        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-          <h1 className="text-3xl font-bold">AcePlan</h1>
-          <motion.div
-            className="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center cursor-pointer"
-            whileHover={{
-              scale: 1.1,
-              backgroundColor: "rgba(255, 255, 255, 0.3)",
-            }}
-            whileTap={{ scale: 0.9 }}
-          >
-            <span className="text-xl font-bold">JS</span>
-          </motion.div>
+    <div className="min-h-screen bg-slate-50">
+      <header className="bg-white border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex justify-between items-center">
+            <h1 className="text-xl font-semibold text-indigo-600">AcePlan</h1>
+            <div className="h-8 w-8 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center">
+              <FiUser size={16} />
+            </div>
+          </div>
         </div>
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <motion.div
-            className="col-span-1"
-            initial={{ x: -20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ delay: 0.1 }}
-          >
-            <div className="card space-y-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          <div className="lg:col-span-1">
+            <motion.div
+              className="card space-y-6"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+            >
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
-                  <FiBook className="mr-2" />
+                <label className="block text-sm font-medium text-slate-700 mb-1 flex items-center">
+                  <FiBook className="mr-1.5" size={14} />
                   Field of Study
                 </label>
                 <select
@@ -97,56 +90,50 @@ const Dashboard = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
-                  <FiClock className="mr-2" />
-                  Weekly Goal (hours)
+                <label className="block text-sm font-medium text-slate-700 mb-1 flex items-center">
+                  <FiClock className="mr-1.5" size={14} />
+                  Weekly Goal
                 </label>
                 <div className="flex items-center">
-                  <motion.button
+                  <button
                     onClick={handleDecreaseGoal}
-                    className="bg-indigo-100 hover:bg-indigo-200 text-indigo-800 h-10 w-10 rounded-l-lg flex items-center justify-center"
-                    whileTap={{ scale: 0.9 }}
+                    className="bg-slate-100 hover:bg-slate-200 h-9 w-9 rounded-l flex items-center justify-center text-slate-600"
                   >
-                    <FiChevronDown />
-                  </motion.button>
-                  <div className="h-10 px-6 flex items-center justify-center border-t border-b border-gray-300">
-                    <motion.span
-                      key={goalHours}
-                      initial={{ y: -10, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      className="text-2xl font-semibold text-indigo-800"
-                    >
+                    <FiChevronDown size={18} />
+                  </button>
+                  <div className="h-9 px-4 flex items-center justify-center border-y border-slate-200">
+                    <span className="text-lg font-medium text-slate-700 w-8 text-center">
                       {goalHours}
-                    </motion.span>
+                    </span>
                   </div>
-                  <motion.button
+                  <button
                     onClick={handleIncreaseGoal}
-                    className="bg-indigo-100 hover:bg-indigo-200 text-indigo-800 h-10 w-10 rounded-r-lg flex items-center justify-center"
-                    whileTap={{ scale: 0.9 }}
+                    className="bg-slate-100 hover:bg-slate-200 h-9 w-9 rounded-r flex items-center justify-center text-slate-600"
                   >
-                    <FiChevronUp />
-                  </motion.button>
+                    <FiChevronUp size={18} />
+                  </button>
+                  <span className="ml-3 text-sm text-slate-500">
+                    hours/week
+                  </span>
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-gray-200">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-medium text-gray-900">
-                    Quick Stats
-                  </h3>
-                </div>
-                <div className="mt-4 grid grid-cols-2 gap-4">
-                  <div className="bg-indigo-50 p-4 rounded-lg">
-                    <div className="font-medium text-indigo-800">Subjects</div>
-                    <div className="text-2xl font-bold text-indigo-900">
+              <hr className="border-slate-200" />
+
+              <div>
+                <h3 className="text-sm font-medium text-slate-700 mb-3">
+                  Quick Stats
+                </h3>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-slate-100 p-3 rounded">
+                    <div className="text-xs text-slate-500 mb-1">Subjects</div>
+                    <div className="text-xl font-semibold text-slate-800">
                       {subjects.length}
                     </div>
                   </div>
-                  <div className="bg-purple-50 p-4 rounded-lg">
-                    <div className="font-medium text-purple-800">
-                      Study Files
-                    </div>
-                    <div className="text-2xl font-bold text-purple-900">
+                  <div className="bg-slate-100 p-3 rounded">
+                    <div className="text-xs text-slate-500 mb-1">Files</div>
+                    <div className="text-xl font-semibold text-slate-800">
                       {subjects.reduce(
                         (acc, subj) => acc + subj.files.length,
                         0
@@ -155,38 +142,36 @@ const Dashboard = () => {
                   </div>
                 </div>
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </div>
 
-          <motion.div
-            className="col-span-1 lg:col-span-2"
-            initial={{ x: 20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-          >
-            <div className="card">
+          <div className="lg:col-span-3">
+            <motion.div
+              className="card"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.1 }}
+            >
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-semibold text-gray-900">
+                <h2 className="text-lg font-medium text-slate-800">
                   Your Subjects
-                </h3>
-                <motion.button
+                </h2>
+                <button
                   onClick={() => setShowSubjectForm(true)}
-                  className="btn flex items-center space-x-1"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  className="btn inline-flex items-center text-sm py-1.5"
                 >
-                  <FiPlus />
-                  <span>Add Subject</span>
-                </motion.button>
+                  <FiPlus className="mr-1.5" size={14} />
+                  Add Subject
+                </button>
               </div>
 
               <AnimatePresence>
                 {showSubjectForm && (
                   <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                    className="overflow-hidden mb-6"
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="mb-6"
                   >
                     <SubjectForm
                       onSubmit={handleAddSubject}
@@ -197,41 +182,36 @@ const Dashboard = () => {
               </AnimatePresence>
 
               {subjects.length > 0 ? (
-                <motion.ul layout className="divide-y divide-gray-200">
+                <motion.div layout className="space-y-3">
                   <AnimatePresence>
                     {subjects.map((subject) => (
-                      <motion.li
+                      <motion.div
                         key={subject.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, height: 0 }}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
                         layout
-                        className="py-4"
+                        className="bg-slate-50 rounded-lg p-4 border border-slate-100"
                       >
                         <div
                           onClick={() => toggleExpandSubject(subject.id)}
                           className="cursor-pointer"
                         >
-                          <motion.div className="flex justify-between items-center">
+                          <div className="flex justify-between items-center">
                             <div>
-                              <h4 className="text-lg font-semibold text-gray-900">
+                              <h3 className="font-medium text-slate-800">
                                 {subject.name}
-                              </h4>
-                              <p className="text-sm text-gray-500">
+                              </h3>
+                              <p className="text-xs text-slate-500 mt-0.5">
                                 {subject.files.length}{" "}
-                                {subject.files.length === 1 ? "file" : "files"}{" "}
-                                uploaded
+                                {subject.files.length === 1 ? "file" : "files"}
                               </p>
                             </div>
-                            <motion.div
-                              className="text-indigo-600 hover:text-indigo-800 flex items-center"
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
-                            >
-                              <FiEye className="mr-1" />
-                              <span>View</span>
-                            </motion.div>
-                          </motion.div>
+                            <button className="text-indigo-500 hover:text-indigo-700 text-sm flex items-center">
+                              <FiEye className="mr-1" size={14} />
+                              View
+                            </button>
+                          </div>
                         </div>
 
                         <AnimatePresence>
@@ -241,75 +221,62 @@ const Dashboard = () => {
                                 initial={{ opacity: 0, height: 0 }}
                                 animate={{ opacity: 1, height: "auto" }}
                                 exit={{ opacity: 0, height: 0 }}
-                                transition={{ duration: 0.3 }}
-                                className="mt-4 pt-4 border-t border-gray-100"
+                                transition={{ duration: 0.2 }}
+                                className="mt-3 pt-3 border-t border-slate-200"
                               >
-                                <h5 className="text-sm font-medium text-gray-700 mb-2">
-                                  Uploaded Materials:
-                                </h5>
-                                <ul className="space-y-2">
+                                <h4 className="text-xs font-medium text-slate-500 mb-2">
+                                  Uploaded Materials
+                                </h4>
+                                <div className="space-y-2 max-h-60 overflow-y-auto pr-1 scrollbar-thin">
                                   {subject.files.map((file, idx) => (
-                                    <motion.li
+                                    <div
                                       key={idx}
-                                      initial={{ opacity: 0, x: -10 }}
-                                      animate={{ opacity: 1, x: 0 }}
-                                      transition={{ delay: idx * 0.1 }}
-                                      className="flex items-center p-2 bg-gray-50 rounded"
+                                      className="flex items-center p-2 bg-white rounded border border-slate-100"
                                     >
                                       <div
-                                        className={`w-8 h-8 rounded flex items-center justify-center mr-3 ${
+                                        className={`h-7 w-7 rounded flex items-center justify-center mr-2 text-xs ${
                                           file.type.includes("pdf")
-                                            ? "bg-red-100 text-red-700"
-                                            : "bg-blue-100 text-blue-700"
+                                            ? "bg-red-100 text-red-600"
+                                            : "bg-blue-100 text-blue-600"
                                         }`}
                                       >
-                                        {file.type.includes("pdf")
-                                          ? "PDF"
-                                          : "IMG"}
+                                        {file.type.includes("pdf") ? (
+                                          <FiFileText size={12} />
+                                        ) : (
+                                          <FiImage size={12} />
+                                        )}
                                       </div>
-                                      <div className="text-sm">{file.name}</div>
-                                    </motion.li>
+                                      <div className="text-xs text-slate-600 truncate max-w-full flex-1">
+                                        {file.name}
+                                      </div>
+                                    </div>
                                   ))}
-                                </ul>
+                                </div>
                               </motion.div>
                             )}
                         </AnimatePresence>
-                      </motion.li>
+                      </motion.div>
                     ))}
                   </AnimatePresence>
-                </motion.ul>
-              ) : (
-                <motion.div
-                  className="py-12 text-center"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.3 }}
-                >
-                  <div className="mx-auto w-24 h-24 rounded-full bg-indigo-100 flex items-center justify-center mb-4">
-                    <FiBook className="text-indigo-600 text-3xl" />
-                  </div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-1">
-                    No subjects added yet
-                  </h3>
-                  <p className="text-gray-500 mb-4">
-                    Add your first subject to start tracking your study plan
-                  </p>
-                  <motion.button
-                    onClick={() => setShowSubjectForm(true)}
-                    className="btn inline-flex items-center"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <FiPlus className="mr-2" />
-                    Add Your First Subject
-                  </motion.button>
                 </motion.div>
+              ) : (
+                <div className="text-center py-12">
+                  <div className="mx-auto h-12 w-12 rounded-full bg-slate-100 flex items-center justify-center mb-3">
+                    <FiBook className="text-slate-400" size={20} />
+                  </div>
+                  <h3 className="text-sm font-medium text-slate-700 mb-1">
+                    No subjects yet
+                  </h3>
+                  <p className="text-xs text-slate-500 mb-4">
+                    Add your first subject to get started
+                  </p>
+                </div>
               )}
-            </div>
-          </motion.div>
+            </motion.div>
+          </div>
         </div>
       </main>
-    </motion.div>
+    </div>
   );
 };
 

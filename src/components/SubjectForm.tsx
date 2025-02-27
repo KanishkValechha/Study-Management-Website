@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiX, FiUpload, FiFile } from "react-icons/fi";
+import { FiX, FiFile, FiPaperclip } from "react-icons/fi";
 
 interface SubjectFormProps {
   onSubmit: (name: string, files: File[]) => void;
@@ -55,34 +55,30 @@ const SubjectForm = ({ onSubmit, onCancel }: SubjectFormProps) => {
   };
 
   const openFileSelector = () => {
-    // Trigger click on the hidden file input
     fileInputRef.current?.click();
   };
 
   return (
-    <motion.div
-      className="glass-effect rounded-xl overflow-hidden"
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ type: "spring", stiffness: 100 }}
-    >
-      <div className="p-6">
+    <div className="bg-slate-50 rounded-lg border border-slate-200 overflow-hidden">
+      <div className="p-4">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-medium text-gray-900">Add New Subject</h3>
-          <motion.button
+          <h3 className="text-sm font-medium text-slate-800">
+            Add New Subject
+          </h3>
+          <button
             onClick={onCancel}
-            className="text-gray-400 hover:text-gray-600 p-1 rounded-full"
-            whileHover={{ scale: 1.1, backgroundColor: "rgba(0, 0, 0, 0.05)" }}
-            whileTap={{ scale: 0.9 }}
+            className="text-slate-400 hover:text-slate-600 p-1 rounded"
+            aria-label="Close"
           >
-            <FiX />
-          </motion.button>
+            <FiX size={16} />
+          </button>
         </div>
+
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label
               htmlFor="subjectName"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-xs font-medium text-slate-700 mb-1"
             >
               Subject Name
             </label>
@@ -94,61 +90,38 @@ const SubjectForm = ({ onSubmit, onCancel }: SubjectFormProps) => {
               className="input-field"
               placeholder="e.g. Mathematics, Physics"
             />
-            {error && (
-              <motion.p
-                className="mt-1 text-sm text-red-600"
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                {error}
-              </motion.p>
-            )}
+            {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-xs font-medium text-slate-700 mb-1">
               Upload Notes (PDF/Images)
             </label>
-            <motion.div
-              className={`mt-1 border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center ${
+            <div
+              className={`mt-1 border-2 border-dashed rounded p-5 flex flex-col items-center justify-center ${
                 dragActive
-                  ? "border-indigo-400 bg-indigo-50"
-                  : "border-gray-300"
+                  ? "border-indigo-300 bg-indigo-50"
+                  : "border-slate-200"
               }`}
               onDragEnter={handleDrag}
               onDragLeave={handleDrag}
               onDragOver={handleDrag}
               onDrop={handleDrop}
               onClick={openFileSelector}
-              whileHover={{ backgroundColor: "rgb(238, 242, 255)" }}
-              animate={dragActive ? { scale: 1.02 } : { scale: 1 }}
-              transition={{ type: "spring", stiffness: 300, damping: 15 }}
               style={{ cursor: "pointer" }}
             >
-              <div className="space-y-2 text-center">
-                <motion.div
-                  className="mx-auto p-3 rounded-full bg-indigo-100 text-indigo-600"
-                  animate={{ y: [0, -5, 0] }}
-                  transition={{
-                    repeat: Infinity,
-                    repeatType: "reverse",
-                    duration: 1.5,
-                  }}
-                >
-                  <FiUpload className="text-2xl" />
-                </motion.div>
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm text-gray-600">
-                    <span
-                      className="font-medium text-indigo-600 hover:underline cursor-pointer"
-                      onClick={openFileSelector}
-                    >
-                      Click to browse
+              <div className="text-center">
+                <div className="p-2 rounded-full bg-slate-100 text-slate-500 mx-auto mb-2">
+                  <FiPaperclip size={18} />
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs text-slate-600">
+                    <span className="font-medium text-indigo-600">
+                      Click to upload
                     </span>{" "}
                     or drag and drop
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-slate-400">
                     PDF, PNG, JPG up to 10MB
                   </p>
                 </div>
@@ -162,85 +135,68 @@ const SubjectForm = ({ onSubmit, onCancel }: SubjectFormProps) => {
                   className="sr-only"
                 />
               </div>
-            </motion.div>
+            </div>
 
             {files.length > 0 && (
-              <motion.div
-                className="mt-4"
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                transition={{ duration: 0.3 }}
-              >
-                <p className="text-sm font-medium text-gray-700 mb-2">
+              <div className="mt-3">
+                <p className="text-xs font-medium text-slate-500 mb-2">
                   Selected files:
                 </p>
-                <motion.ul className="space-y-2 max-h-48 overflow-y-auto pr-2">
+                <div className="space-y-2 max-h-32 overflow-y-auto scrollbar-thin pr-1">
                   <AnimatePresence>
                     {files.map((file, idx) => (
-                      <motion.li
+                      <motion.div
                         key={file.name + idx}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: 20 }}
+                        initial={{ opacity: 0, y: -5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0 }}
                         transition={{ delay: idx * 0.05 }}
-                        className="flex items-center justify-between p-2 bg-gray-50 rounded-md"
+                        className="flex items-center justify-between p-2 bg-white rounded border border-slate-100"
                       >
-                        <div className="flex items-center">
+                        <div className="flex items-center truncate mr-2">
                           <div
-                            className={`w-8 h-8 rounded flex items-center justify-center mr-3 ${
+                            className={`w-6 h-6 rounded flex items-center justify-center mr-2 ${
                               file.type.includes("pdf")
-                                ? "bg-red-100 text-red-700"
-                                : "bg-blue-100 text-blue-700"
+                                ? "bg-red-100 text-red-600"
+                                : "bg-blue-100 text-blue-600"
                             }`}
                           >
-                            <FiFile />
+                            <FiFile size={12} />
                           </div>
-                          <span className="text-sm truncate max-w-[200px]">
+                          <span className="text-xs truncate max-w-[180px]">
                             {file.name}
                           </span>
                         </div>
-                        <motion.button
+                        <button
                           type="button"
                           onClick={() => removeFile(idx)}
-                          className="text-gray-400 hover:text-gray-600 p-1 rounded-full"
-                          whileHover={{
-                            scale: 1.1,
-                            backgroundColor: "rgba(0, 0, 0, 0.05)",
-                          }}
-                          whileTap={{ scale: 0.9 }}
+                          className="text-slate-400 hover:text-slate-600 p-1 rounded flex-shrink-0"
                         >
-                          <FiX />
-                        </motion.button>
-                      </motion.li>
+                          <FiX size={14} />
+                        </button>
+                      </motion.div>
                     ))}
                   </AnimatePresence>
-                </motion.ul>
-              </motion.div>
+                </div>
+              </div>
             )}
           </div>
 
-          <div className="flex justify-end space-x-3">
-            <motion.button
+          <div className="flex justify-end space-x-2">
+            <button
               type="button"
               onClick={onCancel}
-              className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              className="btn-secondary text-sm py-1.5 px-3"
             >
               Cancel
-            </motion.button>
-            <motion.button
-              type="submit"
-              className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
+            </button>
+            <button type="submit" className="btn text-sm py-1.5 px-3">
               Save Subject
-            </motion.button>
+            </button>
           </div>
         </form>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

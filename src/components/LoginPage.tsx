@@ -21,66 +21,27 @@ const LoginPage = ({ onLogin }: LoginPageProps) => {
   };
 
   return (
-    <motion.div
-      className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.3 }}
-    >
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
       <motion.div
         className="w-full max-w-md"
-        initial={{ y: 20 }}
-        animate={{ y: 0 }}
-        transition={{ delay: 0.1, type: "spring", stiffness: 100 }}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
       >
-        <motion.div
-          className="glass-effect rounded-3xl overflow-hidden p-8"
-          whileHover={{
-            boxShadow:
-              "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)",
-          }}
-          transition={{ duration: 0.2 }}
-        >
+        <div className="card overflow-hidden">
           <div className="text-center mb-8">
-            <motion.div
-              initial={{ scale: 0.8 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.2, type: "spring", stiffness: 100 }}
-            >
-              <div className="w-20 h-20 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full mx-auto mb-4 flex items-center justify-center">
-                <FiUser className="text-white text-3xl" />
-              </div>
-            </motion.div>
-            <motion.h2
-              className="text-3xl font-bold text-gray-900 mb-1"
-              initial={{ y: -20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.3 }}
-            >
-              Welcome to AcePlan
-            </motion.h2>
-            <motion.p
-              className="text-gray-600"
-              initial={{ y: -20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.4 }}
-            >
-              Sign in to manage your study plan
-            </motion.p>
+            <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-indigo-100 text-indigo-600 mb-4">
+              <FiUser size={24} />
+            </div>
+            <h2 className="text-2xl font-bold mb-1">Welcome to AcePlan</h2>
+            <p className="text-slate-500">Sign in to manage your study plan</p>
           </div>
 
-          <motion.form
-            className="space-y-6"
-            onSubmit={handleSubmit}
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.5 }}
-          >
+          <form className="space-y-5" onSubmit={handleSubmit}>
             <div>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FiUser className="text-gray-400" />
+                  <FiUser className="text-slate-400" />
                 </div>
                 <input
                   id="username"
@@ -99,7 +60,7 @@ const LoginPage = ({ onLogin }: LoginPageProps) => {
             <div>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FiLock className="text-gray-400" />
+                  <FiLock className="text-slate-400" />
                 </div>
                 <input
                   id="password"
@@ -118,9 +79,8 @@ const LoginPage = ({ onLogin }: LoginPageProps) => {
             {error && (
               <motion.p
                 className="text-red-500 text-sm"
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
               >
                 {error}
               </motion.p>
@@ -128,36 +88,29 @@ const LoginPage = ({ onLogin }: LoginPageProps) => {
 
             <motion.button
               type="submit"
-              className="btn w-full flex items-center justify-center gap-2"
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
+              className="btn w-full flex items-center justify-center gap-2 py-2.5"
+              whileTap={{ scale: 0.98 }}
             >
               <span>Sign in</span>
-              <FiArrowRight />
+              <FiArrowRight size={16} />
             </motion.button>
 
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between pt-2">
               <div className="text-sm">
-                <a
-                  href="#"
-                  className="text-indigo-600 hover:text-indigo-700 transition-colors"
-                >
-                  Forgot your password?
+                <a href="#" className="text-indigo-600 hover:text-indigo-700">
+                  Forgot password?
                 </a>
               </div>
               <div className="text-sm">
-                <a
-                  href="#"
-                  className="text-indigo-600 hover:text-indigo-700 transition-colors"
-                >
+                <a href="#" className="text-indigo-600 hover:text-indigo-700">
                   Create account
                 </a>
               </div>
             </div>
-          </motion.form>
-        </motion.div>
+          </form>
+        </div>
       </motion.div>
-    </motion.div>
+    </div>
   );
 };
 
