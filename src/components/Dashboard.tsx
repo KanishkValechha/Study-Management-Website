@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FiBook,
@@ -12,11 +12,27 @@ import {
   FiUser,
 } from "react-icons/fi";
 import SubjectForm from "./SubjectForm";
+import {
+  StoredSubject,
+  saveSubjectsToStorage,
+  getSubjectsFromStorage,
+  saveFilesToStorage,
+  getFileById,
+  createFileFromStored,
+} from "../utils/fileStorage";
+
+interface SubjectFile {
+  id: string;
+  name: string;
+  type: string;
+  size: number;
+  dataUrl: string;
+}
 
 interface Subject {
   id: number;
   name: string;
-  files: File[];
+  files: SubjectFile[];
 }
 
 const Dashboard = () => {
@@ -26,14 +42,88 @@ const Dashboard = () => {
   const [showSubjectForm, setShowSubjectForm] = useState(false);
   const [expandedSubject, setExpandedSubject] = useState<number | null>(null);
 
-  const handleAddSubject = (name: string, files: File[]) => {
-    const newSubject: Subject = {
-      id: Date.now(),
-      name,
-      files,
-    };
-    setSubjects([...subjects, newSubject]);
-    setShowSubjectForm(false);
+  // Load subjects and files from localStorage on component mount
+  useEffect(() => {
+    // Load field of study and goal hours
+    const savedFieldOfStudy = localStorage.getItem("aceplan_fieldOfStudy");
+    if (savedFieldOfStudy) {
+      setFieldOfStudy(savedFieldOfStudy);
+    }
+
+    const savedGoalHours = localStorage.getItem("aceplan_goalHours");
+    if (savedGoalHours) {
+      setGoalHours(parseInt(savedGoalHours, 10));
+    }
+
+    // Load subjects and their files
+    const storedSubjects = getSubjectsFromStorage();
+
+    // Map stored subjects to our Subject interface
+    const loadedSubjects: Subject[] = storedSubjects.map((storedSubject) => {
+      // Get files for this subject
+      const subjectFiles: SubjectFile[] = storedSubject.fileIds
+        .map((fileId) => {
+          const file = getFileById(fileId);
+          return file ? createFileFromStored(file) as SubjectFile : null;
+        })
+        .filter((file): file is SubjectFile => file !== null);
+
+      return {
+        id: storedSubject.id,
+        name: storedSubject.name,
+        files: subjectFiles,
+      };
+    });
+
+    setSubjects(loadedSubjects);
+  }, []);
+
+  // Save field of study and goal hours to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem("aceplan_fieldOfStudy", fieldOfStudy);
+  }, [fieldOfStudy]);
+
+  useEffect(() => {
+    localStorage.setItem("aceplan_goalHours", goalHours.toString());
+  }, [goalHours]);
+
+  const handleAddSubject = async (name: string, files: File[]) => {
+    try {
+      // Save files to storage and get stored file references
+      const storedFiles = await saveFilesToStorage(files);
+
+      // Create a new subject
+      const newSubject: Subject = {
+        id: Date.now(),
+        name,
+        files: storedFiles.map((file) => ({
+          id: file.id,
+          name: file.name,
+          type: file.type,
+          size: file.size,
+          dataUrl: file.dataUrl,
+        })),
+      };
+
+      // Update component state
+      const updatedSubjects = [...subjects, newSubject];
+      setSubjects(updatedSubjects);
+
+      // Save updated subjects list to localStorage
+      const storedSubjects: StoredSubject[] = updatedSubjects.map(
+        (subject) => ({
+          id: subject.id,
+          name: subject.name,
+          fileIds: subject.files.map((file) => file.id),
+        })
+      );
+
+      saveSubjectsToStorage(storedSubjects);
+      setShowSubjectForm(false);
+    } catch (error) {
+      console.error("Error saving subject:", error);
+      // Handle error (show message to user, etc.)
+    }
   };
 
   const handleIncreaseGoal = () => {
@@ -48,6 +138,35 @@ const Dashboard = () => {
 
   const toggleExpandSubject = (id: number) => {
     setExpandedSubject(expandedSubject === id ? null : id);
+  };
+
+  const handleViewFile = (dataUrl: string, fileName: string) => {
+    // Open the file in a new tab
+    const newTab = window.open();
+    if (newTab) {
+      newTab.document.write(`
+        <html>
+          <head>
+            <title>${fileName}</title>
+            <style>
+              body { margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f1f5f9; }
+              img, object { max-width: 100%; max-height: 90vh; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+              .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              ${
+                dataUrl.includes("application/pdf")
+                  ? `<object data="${dataUrl}" type="application/pdf" width="800" height="600">PDF Viewer</object>`
+                  : `<img src="${dataUrl}" alt="${fileName}" />`
+              }
+            </div>
+          </body>
+        </html>
+      `);
+      newTab.document.close();
+    }
   };
 
   return (
@@ -228,27 +347,42 @@ const Dashboard = () => {
                                   Uploaded Materials
                                 </h4>
                                 <div className="space-y-2 max-h-60 overflow-y-auto pr-1 scrollbar-thin">
-                                  {subject.files.map((file, idx) => (
+                                  {subject.files.map((file) => (
                                     <div
-                                      key={idx}
-                                      className="flex items-center p-2 bg-white rounded border border-slate-100"
+                                      key={file.id}
+                                      className="flex items-center justify-between p-2 bg-white rounded border border-slate-100"
                                     >
-                                      <div
-                                        className={`h-7 w-7 rounded flex items-center justify-center mr-2 text-xs ${
-                                          file.type.includes("pdf")
-                                            ? "bg-red-100 text-red-600"
-                                            : "bg-blue-100 text-blue-600"
-                                        }`}
+                                      <div className="flex items-center flex-1 min-w-0">
+                                        <div
+                                          className={`h-7 w-7 rounded flex items-center justify-center mr-2 text-xs ${
+                                            file.type.includes("pdf")
+                                              ? "bg-red-100 text-red-600"
+                                              : "bg-blue-100 text-blue-600"
+                                          }`}
+                                        >
+                                          {file.type.includes("pdf") ? (
+                                            <FiFileText size={12} />
+                                          ) : (
+                                            <FiImage size={12} />
+                                          )}
+                                        </div>
+                                        <div className="text-xs text-slate-600 truncate">
+                                          {file.name}
+                                        </div>
+                                      </div>
+
+                                      <button
+                                        onClick={() =>
+                                          handleViewFile(
+                                            file.dataUrl,
+                                            file.name
+                                          )
+                                        }
+                                        className="ml-2 p-1.5 text-indigo-500 hover:text-indigo-700 hover:bg-slate-100 rounded"
+                                        title="View file"
                                       >
-                                        {file.type.includes("pdf") ? (
-                                          <FiFileText size={12} />
-                                        ) : (
-                                          <FiImage size={12} />
-                                        )}
-                                      </div>
-                                      <div className="text-xs text-slate-600 truncate max-w-full flex-1">
-                                        {file.name}
-                                      </div>
+                                        <FiEye size={14} />
+                                      </button>
                                     </div>
                                   ))}
                                 </div>
@@ -270,6 +404,13 @@ const Dashboard = () => {
                   <p className="text-xs text-slate-500 mb-4">
                     Add your first subject to get started
                   </p>
+                  <button
+                    onClick={() => setShowSubjectForm(true)}
+                    className="btn text-sm py-1.5 px-3"
+                  >
+                    <FiPlus className="mr-1.5 inline-block" size={14} />
+                    Add Subject
+                  </button>
                 </div>
               )}
             </motion.div>
